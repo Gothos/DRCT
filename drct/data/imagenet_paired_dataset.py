@@ -4,10 +4,12 @@ import os.path as osp
 from torch.utils import data as data
 from torchvision.transforms.functional import normalize
 
-from basicsr.data.data_util import paths_from_lmdb, scandir
+from basicsr.utils.misc import scandir
+from basicsr.data.data_util import paths_from_lmdb
 from basicsr.data.transforms import augment, paired_random_crop
 from basicsr.utils import FileClient, imfrombytes, img2tensor
-from basicsr.utils.matlab_functions import imresize, rgb2ycbcr
+from basicsr.utils.color_util import rgb2ycbcr
+from basicsr.utils.matlab_functions import imresize
 from basicsr.utils.registry import DATASET_REGISTRY
 
 
