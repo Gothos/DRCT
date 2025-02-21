@@ -179,10 +179,9 @@ class WindowAttention(nn.Module):
             mask: (0/-inf) mask with shape of (num_windows, Wh*Ww, Wh*Ww) or None
         """
         B_, N, C = x.shape
+        dtype= x.dtype
 
-        print(x.dtype,"x dtype")
         qkv = self.qkv(x).reshape(B_, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
-        print(qkv.dtype,"qkv dtype")
         q, k, v = qkv[0], qkv[1], qkv[2]  # make torchscript happy (cannot use tensor as tuple)
 
         q = q * self.scale
@@ -203,9 +202,8 @@ class WindowAttention(nn.Module):
             attn = self.softmax(attn)
 
         attn = self.attn_drop(attn)
-        print(attn.dtype,v.dtype)
 
-        x = (attn @ v).transpose(1, 2).reshape(B_, N, C)
+        x = (attn @ v.float()).transpose(1, 2).reshape(B_, N, C).to(x.dtype)
         x = self.proj(x)
         x = self.proj_drop(x)
         return x
